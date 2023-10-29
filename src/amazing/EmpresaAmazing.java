@@ -9,27 +9,21 @@ public class EmpresaAmazing implements IEmpresa {
 	private HashMap<Integer, Pedido> pedidos;
 	private HashMap<String, Transporte> transportes;
 
-
 	public EmpresaAmazing(String cuit) {
-		
+
 		// TODO Auto-generated constructor stub
-		this.cuit= cuit;
-		pedidos = new HashMap<>();
-		transportes = new HashMap<>();
-	
-	}
-	
-
-
-
-	//@Override
-	/*public void crear(String cuit) {
 		this.cuit = cuit;
 		pedidos = new HashMap<>();
 		transportes = new HashMap<>();
-	}*/
-	
-	
+
+	}
+
+	// @Override
+	/*
+	 * public void crear(String cuit) { this.cuit = cuit; pedidos = new HashMap<>();
+	 * transportes = new HashMap<>(); }
+	 */
+
 	@Override
 	public void registrarAutomovil(String patente, int volMax, int valorViaje, int maxPaq) {
 		Automovil automovil = new Automovil(patente, volMax, valorViaje, false, null, maxPaq);
@@ -37,7 +31,7 @@ public class EmpresaAmazing implements IEmpresa {
 			throw new RuntimeException("Ya esta ingresada esta matricula");
 		}
 		transportes.put(patente, automovil);
-		//falta cantidad maxima de paquetes que transporta
+		// falta cantidad maxima de paquetes que transporta
 	}
 
 //	private Transporte verificarPatente(String patente) {
@@ -50,29 +44,29 @@ public class EmpresaAmazing implements IEmpresa {
 	@Override
 	public void registrarUtilitario(String patente, int volMax, int valorViaje, int valorExtra) {
 		Utilitario utilitario = new Utilitario(patente, volMax, valorViaje, false, null, valorExtra);
-	
+
 		if (transportes.containsKey(patente)) {
-			throw new RuntimeException("Ya esta ingresada esta matricula");	
-		
+			throw new RuntimeException("Ya esta ingresada esta matricula");
+
 		}
-		
-		 if (utilitario.calcularCantidadPaquetes() > 10) {
-		        // Aplica el valor extra
-		        utilitario.setValorExtra(valorExtra);
-		    }
-		
+
+		if (utilitario.calcularCantidadPaquetes() > 10) {
+			// Aplica el valor extra
+			utilitario.setValorExtra(valorExtra);
+		}
+
 		transportes.put(patente, utilitario);
 	}
 
 	@Override
 	public void registrarCamion(String patente, int volMax, int valorViaje, int adicXPaq) {
 		Camion camion = new Camion(patente, volMax, valorViaje, false, null, adicXPaq);
-		
+
 		if (transportes.containsKey(patente)) {
-			throw new RuntimeException("Ya esta ingresada esta matricula");	
-		
+			throw new RuntimeException("Ya esta ingresada esta matricula");
+
 		}
-	
+
 		transportes.put(patente, camion);
 	}
 
@@ -83,7 +77,7 @@ public class EmpresaAmazing implements IEmpresa {
 
 		// Create an empty Carrito (cart)
 		Carrito carrito = new Carrito(0); // You might want to initialize the Carrito differently, depending on
-												// your implementation.
+											// your implementation.
 
 		// Create a new Pedido with both the Cliente and Carrito
 		Pedido pedido = new Pedido(0, clienteObj, 0, false, carrito);
@@ -93,147 +87,144 @@ public class EmpresaAmazing implements IEmpresa {
 
 		return pedido.validarNroPedido();
 	}
-	
+
 	@Override
 	public int agregarPaquete(int codPedido, int volumen, int precio, int costoEnvio) {
-	    // Verificar si el pedido existe en el sistema
-	    if (!pedidos.containsKey(codPedido)) {
-	        throw new RuntimeException("El pedido no está registrado en el sistema.");
-	    }
-	    
-	    // Obtener el pedido correspondiente
-	    Pedido pedido = pedidos.get(codPedido);
-	    
-	    // Verificar si el pedido ya está finalizado
-	    if (pedido.estaEntregado()) {
-	        throw new RuntimeException("El pedido ya está finalizado.");
-	    }
-	    
-	    // Crear un paquete de tipo ordinario y asignar un código único
-	    int codigoUnicoPaquete = generarCodigoUnicoPaquete();
-	    PaqueteOrdinario paquete = new PaqueteOrdinario(codigoUnicoPaquete, volumen, precio, false, costoEnvio);
-	    
-	    // Agregar el paquete al carrito del pedido
-	    Carrito carrito = pedido.obtenerCarrito();
-	    carrito.agregarPaquete(paquete);
-	    
-	    // Devolver el código único del paquete
-	    return codigoUnicoPaquete;
+		// Verificar si el pedido existe en el sistema
+		if (!pedidos.containsKey(codPedido)) {
+			throw new RuntimeException("El pedido no está registrado en el sistema.");
+		}
+
+		// Obtener el pedido correspondiente
+		Pedido pedido = pedidos.get(codPedido);
+
+		// Verificar si el pedido ya está finalizado
+		if (pedido.estaEntregado()) {
+			throw new RuntimeException("El pedido ya está finalizado.");
+		}
+
+		// Crear un paquete de tipo ordinario y asignar un código único
+		int codigoUnicoPaquete = generarCodigoUnicoPaquete();
+		PaqueteOrdinario paquete = new PaqueteOrdinario(codigoUnicoPaquete, volumen, precio, false, costoEnvio);
+
+		// Agregar el paquete al carrito del pedido
+		Carrito carrito = pedido.obtenerCarrito();
+		carrito.agregarPaquete(paquete);
+
+		// Devolver el código único del paquete
+		return codigoUnicoPaquete;
 	}
 
 	// Método para generar un código único para el paquete
 	private static int codigoUnicoPaquete = 1; // Inicializamos el contador en 1
 
 	private int generarCodigoUnicoPaquete() {
-	    int codigo = codigoUnicoPaquete;
-	    codigoUnicoPaquete++; // Incrementa el contador para el próximo paquete
-	    return codigo;
+		int codigo = codigoUnicoPaquete;
+		codigoUnicoPaquete++; // Incrementa el contador para el próximo paquete
+		return codigo;
 	}
 
 	@Override
 	public int agregarPaquete(int codPedido, int volumen, int precio, int porcentajeAdicional, int adicional) {
-	    // Verificar si el pedido existe en el sistema
-	    if (!pedidos.containsKey(codPedido)) {
-	        throw new RuntimeException("El pedido no está registrado en el sistema.");
-	    }
+		// Verificar si el pedido existe en el sistema
+		if (!pedidos.containsKey(codPedido)) {
+			throw new RuntimeException("El pedido no está registrado en el sistema.");
+		}
 
-	    // Obtener el pedido correspondiente
-	    Pedido pedido = pedidos.get(codPedido);
+		// Obtener el pedido correspondiente
+		Pedido pedido = pedidos.get(codPedido);
 
-	    // Verificar si el pedido ya está finalizado
-	    if (pedido.estaEntregado()) {
-	        throw new RuntimeException("El pedido ya está finalizado.");
-	    }
+		// Verificar si el pedido ya está finalizado
+		if (pedido.estaEntregado()) {
+			throw new RuntimeException("El pedido ya está finalizado.");
+		}
 
-	    // Calcular el precio con el porcentaje adicional (si es mayor a 0)
-	    double precioConAdicional = precio;
-	    if (porcentajeAdicional > 0) {
-	        precioConAdicional += (precio * porcentajeAdicional / 100.0);
-	    }
+		// Calcular el precio con el porcentaje adicional (si es mayor a 0)
+		double precioConAdicional = precio;
+		if (porcentajeAdicional > 0) {
+			precioConAdicional += (precio * porcentajeAdicional / 100.0);
+		}
 
-	    // Verificar si se agrega el adicional
-	    if (volumen > 3000) {
-	        precioConAdicional += adicional;
-	    }
+		// Verificar si se agrega el adicional
+		if (volumen > 3000) {
+			precioConAdicional += adicional;
+		}
 
-	    // Crear un paquete de tipo especial y asignar un código único
-	    int codigoUnicoPaquete = generarCodigoUnicoPaquete();
-	    PaqueteEspecial paquete = new PaqueteEspecial(codigoUnicoPaquete, volumen, precioConAdicional, false, porcentajeAdicional, adicional);
+		// Crear un paquete de tipo especial y asignar un código único
+		int codigoUnicoPaquete = generarCodigoUnicoPaquete();
+		PaqueteEspecial paquete = new PaqueteEspecial(codigoUnicoPaquete, volumen, precioConAdicional, false,
+				porcentajeAdicional, adicional);
 
-	    // Agregar el paquete al carrito del pedido
-	    Carrito carrito = pedido.obtenerCarrito();
-	    carrito.agregarPaquete(paquete);
+		// Agregar el paquete al carrito del pedido
+		Carrito carrito = pedido.obtenerCarrito();
+		carrito.agregarPaquete(paquete);
 
-	    // Devolver el código único del paquete
-	    return codigoUnicoPaquete;
+		// Devolver el código único del paquete
+		return codigoUnicoPaquete;
 	}
-
 
 	@Override
 	public boolean quitarPaquete(int codPaquete) {
-	    // Complejidad en términos de O grande: O(N * M), donde N es el número de pedidos y M es el número promedio de paquetes en cada carrito.
+		// Complejidad en términos de O grande: O(N * M), donde N es el número de
+		// pedidos y M es el número promedio de paquetes en cada carrito.
 
-	    for (Pedido pedido : pedidos.values()) {
-	        // Verificar si el pedido no está finalizado
-	        if (!pedido.estaEntregado()) {
-	            Carrito carrito = pedido.obtenerCarrito();
-	            List<Paquete> paquetes = carrito.obtenerPaquetes();
+		for (Pedido pedido : pedidos.values()) {
+			// Verificar si el pedido no está finalizado
+			if (!pedido.estaEntregado()) {
+				Carrito carrito = pedido.obtenerCarrito();
+				List<Paquete> paquetes = carrito.obtenerPaquetes();
 
-	            // Buscar el paquete en el carrito del pedido
-	            for (Paquete paquete : paquetes) {
-	                if (paquete.obtenerIdentificador() == codPaquete) {
-	                    // Eliminar el paquete del carrito
-	                    carrito.eliminarPaquete(paquete);
-	                    return true; // Paquete encontrado y eliminado, devolvemos true
-	                }
-	            }
-	        }
-	    }
+				// Buscar el paquete en el carrito del pedido
+				for (Paquete paquete : paquetes) {
+					if (paquete.obtenerIdentificador() == codPaquete) {
+						// Eliminar el paquete del carrito
+						carrito.eliminarPaquete(paquete);
+						return true; // Paquete encontrado y eliminado, devolvemos true
+					}
+				}
+			}
+		}
 
-	    return false; // Paquete no encontrado o pedido finalizado, devolvemos false
+		return false; // Paquete no encontrado o pedido finalizado, devolvemos false
 	}
-
-
-
 
 	@Override
 	public double cerrarPedido(int codPedido) {
-	    // Paso 1: Buscar el pedido correspondiente al código proporcionado.
-	    Pedido pedido = pedidos.get(codPedido);
+		// Paso 1: Buscar el pedido correspondiente al código proporcionado.
+		Pedido pedido = pedidos.get(codPedido);
 
-	    if (pedido == null) {
-	        // El pedido no está registrado en el sistema, generar una excepción.
-	        throw new RuntimeException("El pedido no está registrado en el sistema.");
-	    }
+		if (pedido == null) {
+			// El pedido no está registrado en el sistema, generar una excepción.
+			throw new RuntimeException("El pedido no está registrado en el sistema.");
+		}
 
-	    if (pedido.estaEntregado()) {
-	        // El pedido ya está finalizado, generar una excepción.
-	        throw new RuntimeException("El pedido ya ha sido finalizado.");
-	    }
+		if (pedido.estaEntregado()) {
+			// El pedido ya está finalizado, generar una excepción.
+			throw new RuntimeException("El pedido ya ha sido finalizado.");
+		}
 
-	    // Paso 2: Calcular el total a pagar por el pedido.
-	    double costoDeServicio = pedido.obtenerCostoDeServicio();
-	    Carrito carrito = pedido.obtenerCarrito();
-	    List<Paquete> paquetes = carrito.obtenerPaquetes();
+		// Paso 2: Calcular el total a pagar por el pedido.
+		double costoDeServicio = pedido.obtenerCostoDeServicio();
+		Carrito carrito = pedido.obtenerCarrito();
+		List<Paquete> paquetes = carrito.obtenerPaquetes();
 
-	    double totalAPagar = costoDeServicio;
+		double totalAPagar = costoDeServicio;
 
-	    for (Paquete paquete : paquetes) {
-	        if (paquete instanceof PaqueteOrdinario) {
-	            PaqueteOrdinario paqueteOrdinario = (PaqueteOrdinario) paquete;
-	            totalAPagar += paqueteOrdinario.obtenerPrecio() + paqueteOrdinario.calcularCostoDeEnvio();
-	        } else if (paquete instanceof PaqueteEspecial) {
-	            PaqueteEspecial paqueteEspecial = (PaqueteEspecial) paquete;
-	            totalAPagar += paqueteEspecial.obtenerPrecio() + paqueteEspecial.calcularCostoAdicional();
-	        }
-	    }
+		for (Paquete paquete : paquetes) {
+			if (paquete instanceof PaqueteOrdinario) {
+				PaqueteOrdinario paqueteOrdinario = (PaqueteOrdinario) paquete;
+				totalAPagar += paqueteOrdinario.obtenerPrecio() + paqueteOrdinario.calcularCostoDeEnvio();
+			} else if (paquete instanceof PaqueteEspecial) {
+				PaqueteEspecial paqueteEspecial = (PaqueteEspecial) paquete;
+				totalAPagar += paqueteEspecial.obtenerPrecio() + paqueteEspecial.calcularCostoAdicional();
+			}
+		}
 
-	    // Paso 3: Finalizar el pedido
-	    pedido.entregarPedido();
+		// Paso 3: Finalizar el pedido
+		pedido.entregarPedido();
 
-	    return totalAPagar;
+		return totalAPagar;
 	}
-
 
 	@Override
 	public String cargarTransporte(String patente) {
@@ -264,6 +255,5 @@ public class EmpresaAmazing implements IEmpresa {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 
 }
