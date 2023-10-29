@@ -15,5 +15,9 @@ public class PaqueteOrdinario extends Paquete {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	public double calcularCostoDeEnvio() {
+		return costoDeEnvio;
+	}
 
 }

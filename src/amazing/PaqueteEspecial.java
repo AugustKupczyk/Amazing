@@ -16,4 +16,12 @@ public class PaqueteEspecial extends Paquete {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	public double calcularPorcentajeAdicional() {
+		return porcentajeAdicional;
+	}
+	
+	public double calcularCostoAdicional() {
+		return costoAdicional;
+	}
 }
