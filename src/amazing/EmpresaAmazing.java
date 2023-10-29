@@ -198,10 +198,42 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public double cerrarPedido(int codPedido) {
-		// TODO Auto-generated method stub
+	    // Paso 1: Buscar el pedido correspondiente al código proporcionado.
+	    Pedido pedido = pedidos.get(codPedido);
 
-		return 0;
+	    if (pedido == null) {
+	        // El pedido no está registrado en el sistema, generar una excepción.
+	        throw new RuntimeException("El pedido no está registrado en el sistema.");
+	    }
+
+	    if (pedido.estaEntregado()) {
+	        // El pedido ya está finalizado, generar una excepción.
+	        throw new RuntimeException("El pedido ya ha sido finalizado.");
+	    }
+
+	    // Paso 2: Calcular el total a pagar por el pedido.
+	    double costoDeServicio = pedido.obtenerCostoDeServicio();
+	    Carrito carrito = pedido.obtenerCarrito();
+	    List<Paquete> paquetes = carrito.obtenerPaquetes();
+
+	    double totalAPagar = costoDeServicio;
+
+	    for (Paquete paquete : paquetes) {
+	        if (paquete instanceof PaqueteOrdinario) {
+	            PaqueteOrdinario paqueteOrdinario = (PaqueteOrdinario) paquete;
+	            totalAPagar += paqueteOrdinario.obtenerPrecio() + paqueteOrdinario.calcularCostoDeEnvio();
+	        } else if (paquete instanceof PaqueteEspecial) {
+	            PaqueteEspecial paqueteEspecial = (PaqueteEspecial) paquete;
+	            totalAPagar += paqueteEspecial.obtenerPrecio() + paqueteEspecial.calcularCostoAdicional();
+	        }
+	    }
+
+	    // Paso 3: Finalizar el pedido
+	    pedido.entregarPedido();
+
+	    return totalAPagar;
 	}
+
 
 	@Override
 	public String cargarTransporte(String patente) {
