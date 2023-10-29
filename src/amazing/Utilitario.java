@@ -15,8 +15,8 @@ public class Utilitario extends Transporte {
 		return 0;
 	}
 	
-	public double calcularCantidadPaquetes() {
-		return paquetes.size();
+	public int calcularCantidadPaquetes() {
+		return 0;
 	}
 	
 	public double obtenerValorExtra() {
@@ -24,6 +24,13 @@ public class Utilitario extends Transporte {
 	}
 
 
+
+	public void setValorExtra(int valorExtra2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 
 }
 

@@ -3,25 +3,40 @@ package amazing;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Empresa<numeroDePedido, patente> implements IEmpresa {
+public class EmpresaAmazing implements IEmpresa {
 	private String cuit;
-	private HashMap<numeroDePedido, Pedido> pedidos;
-	private HashMap<patente, Transporte> transportes;
+	private HashMap<Integer, Pedido> pedidos;
+	private HashMap<String, Transporte> transportes;
 
-	@Override
-	public void crear(String cuit) {
-		this.cuit = cuit;
-		pedidos = new HashMap<numeroDePedido, Pedido>();
-		transportes = new HashMap<patente, Transporte>();
+
+	public EmpresaAmazing(String cuit) {
+		
+		// TODO Auto-generated constructor stub
+		this.cuit= cuit;
+		pedidos = new HashMap<>();
+		transportes = new HashMap<>();
+	
 	}
+	
 
+
+
+	//@Override
+	/*public void crear(String cuit) {
+		this.cuit = cuit;
+		pedidos = new HashMap<>();
+		transportes = new HashMap<>();
+	}*/
+	
+	
 	@Override
 	public void registrarAutomovil(String patente, int volMax, int valorViaje, int maxPaq) {
 		Automovil automovil = new Automovil(patente, volMax, valorViaje, false, null, maxPaq);
-		if (patente == automovil.identificarPatente()) {
+		if (transportes.containsKey(patente)) {
 			throw new RuntimeException("Ya esta ingresada esta matricula");
 		}
 		transportes.put(patente, automovil);
+		//falta cantidad maxima de paquetes que transporta
 	}
 
 //	private Transporte verificarPatente(String patente) {
@@ -34,12 +49,32 @@ public class Empresa<numeroDePedido, patente> implements IEmpresa {
 	@Override
 	public void registrarUtilitario(String patente, int volMax, int valorViaje, int valorExtra) {
 		Utilitario utilitario = new Utilitario(patente, volMax, valorViaje, false, null, valorExtra);
+	
+		if (transportes.containsKey(patente)) {
+			throw new RuntimeException("Ya esta ingresada esta matricula");	
+		
+		}
+		
+		 if (utilitario.calcularCantidadPaquetes() > 10) {
+		        // Aplica el valor extra
+		        utilitario.setValorExtra(valorExtra);
+		    }
+		
 		transportes.put(patente, utilitario);
 	}
 
 	@Override
 	public void registrarCamion(String patente, int volMax, int valorViaje, int adicXPaq) {
 		Camion camion = new Camion(patente, volMax, valorViaje, false, null, adicXPaq);
+		
+		if (transportes.containsKey(patente)) {
+			throw new RuntimeException("Ya esta ingresada esta matricula");	
+		
+		}
+		
+		
+		
+		
 		transportes.put(patente, camion);
 	}
 
@@ -74,9 +109,10 @@ public class Empresa<numeroDePedido, patente> implements IEmpresa {
 	}
 
 	@Override
-	public void cerrarPedido(int codPedido) {
+	public double cerrarPedido(int codPedido) {
 		// TODO Auto-generated method stub
 
+		return 0;
 	}
 
 	@Override
