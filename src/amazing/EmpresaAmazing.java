@@ -229,19 +229,38 @@ public class EmpresaAmazing implements IEmpresa {
 	@Override
 	public String cargarTransporte(String patente) {
 		// TODO Auto-generated method stub
+		
+		// Verificar si la patente está registrada en el sistema
+	    if (!transportes.containsKey(patente)) {
+	        throw new RuntimeException("La patente no está registrada en el sistema.");
+	    }
+		
+		
 		return null;
 	}
 
 	@Override
 	public double costoEntrega(String patente) {
-		// TODO Auto-generated method stub
-		return 0;
+	    // Verificar si la patente está registrada en el sistema
+	    if (!transportes.containsKey(patente)) {
+	        throw new RuntimeException("La patente no está registrada en el sistema.");
+	    }
+
+	    // Obtener el transporte correspondiente a la patente
+	    Transporte transporte = transportes.get(patente);
+
+	    // Verificar si el transporte está cargado
+	    if (!transporte.estaCargado()) {
+	        throw new RuntimeException("El transporte no está cargado.");
+	    }
+	    
+	    // Obtener el valor del viaje según la patente proporcionada
+	    return transporte.calcularValorDelViaje(patente);
 	}
 
 	@Override
 	public Map<Integer, String> pedidosNoEntregados() {
-		// TODO Auto-generated method stub
-		return null;
+	    return null;
 	}
 
 	@Override
@@ -252,7 +271,7 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public boolean hayTransportesIdenticos() {
-		// TODO Auto-generated method stub
+	
 		return false;
 	}
 
