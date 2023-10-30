@@ -80,7 +80,7 @@ public class EmpresaAmazing implements IEmpresa {
 											// your implementation.
 
 		// Create a new Pedido with both the Cliente and Carrito
-		Pedido pedido = new Pedido(0, clienteObj, 0, false, carrito);
+		Pedido pedido = new Pedido(0, clienteObj, 0, false, carrito, false);
 
 		// Add the Pedido to the pedidos HashMap
 		pedidos.put(pedido.validarNroPedido(), pedido);
@@ -185,25 +185,21 @@ public class EmpresaAmazing implements IEmpresa {
 			}
 		}
 
-		return false; // Paquete no encontrado o pedido finalizado, devolvemos false
+		 throw new RuntimeException("No se encontro"); // Paquete no encontrado o pedido finalizado, devolvemos false
 	}
 
 	@Override
 	public double cerrarPedido(int codPedido) {
-		// Paso 1: Buscar el pedido correspondiente al código proporcionado.
 		Pedido pedido = pedidos.get(codPedido);
 
 		if (pedido == null) {
-			// El pedido no está registrado en el sistema, generar una excepción.
 			throw new RuntimeException("El pedido no está registrado en el sistema.");
 		}
 
 		if (pedido.estaEntregado()) {
-			// El pedido ya está finalizado, generar una excepción.
 			throw new RuntimeException("El pedido ya ha sido finalizado.");
 		}
 
-		// Paso 2: Calcular el total a pagar por el pedido.
 		double costoDeServicio = pedido.obtenerCostoDeServicio();
 		Carrito carrito = pedido.obtenerCarrito();
 		List<Paquete> paquetes = carrito.obtenerPaquetes();
@@ -213,16 +209,14 @@ public class EmpresaAmazing implements IEmpresa {
 		for (Paquete paquete : paquetes) {
 			if (paquete instanceof PaqueteOrdinario) {
 				PaqueteOrdinario paqueteOrdinario = (PaqueteOrdinario) paquete;
-				totalAPagar += paqueteOrdinario.obtenerPrecio() + paqueteOrdinario.calcularCostoDeEnvio();
+				totalAPagar = paqueteOrdinario.obtenerPrecio() + paqueteOrdinario.calcularCostoDeEnvio();
 			} else if (paquete instanceof PaqueteEspecial) {
 				PaqueteEspecial paqueteEspecial = (PaqueteEspecial) paquete;
-				totalAPagar += paqueteEspecial.obtenerPrecio() + paqueteEspecial.calcularCostoAdicional();
+				totalAPagar = paqueteEspecial.obtenerPrecio() + paqueteEspecial.calcularPorcentajeAdicional() + paqueteEspecial.calcularCostoAdicional();
 			}
 		}
 
-		// Paso 3: Finalizar el pedido
-		pedido.entregarPedido();
-
+		pedido.cerrarPedido();
 		return totalAPagar;
 	}
 
@@ -236,7 +230,7 @@ public class EmpresaAmazing implements IEmpresa {
 	    }
 		
 		
-		return null;
+		return "";
 	}
 
 	@Override
@@ -274,5 +268,10 @@ public class EmpresaAmazing implements IEmpresa {
 	
 		return false;
 	}
+	
+	@Override
+    public String toString() {
+        return "EmpresaAmazing con CUIT: " + cuit;
+    }
 
 }

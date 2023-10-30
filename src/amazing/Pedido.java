@@ -7,15 +7,17 @@ public class Pedido {
 	private double costoDeServicio;
 	private boolean entregado;
 	private Carrito carrito;
+	private boolean cerrado;
 
 	
-	public Pedido(int numeroDePedido, Cliente cliente, double costoDeServicio, boolean entregado,Carrito carrito) {
+	public Pedido(int numeroDePedido, Cliente cliente, double costoDeServicio, boolean entregado,Carrito carrito, boolean cerrado) {
 		super();
 		this.numeroDePedido = numeroDePedido;
 		this.cliente = cliente;
 		this.costoDeServicio = costoDeServicio;
 		this.entregado = entregado;
 		this.carrito = carrito;
+		this.cerrado = cerrado;
 	}
 	
 	public double obtenerCostoDeServicio() {
@@ -36,6 +38,14 @@ public class Pedido {
 	}
 	
 	public void entregarPedido() {
+	}
+	
+	public boolean estaCerrado() {
+		return cerrado;
+	}
+	
+	public void cerrarPedido() {
+		
 	}
 	
 	public Cliente obtenerCliente() {
