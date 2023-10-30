@@ -38,6 +38,7 @@ public class Pedido {
 	}
 	
 	public void entregarPedido() {
+		entregado = true;
 	}
 	
 	public boolean estaCerrado() {
@@ -45,7 +46,7 @@ public class Pedido {
 	}
 	
 	public void cerrarPedido() {
-		
+		 cerrado = true;
 	}
 	
 	public Cliente obtenerCliente() {

@@ -3,14 +3,14 @@ package amazing;
 public abstract class Paquete implements Comparable <Paquete> {
 	
 	private int identificador;
-	private double volumen;
-	private double precio;
+	protected double volumen;
+	protected double costo;
 	private boolean entregado;
 	
-	public Paquete(int identificador, double volumen, double precio, boolean entregado) {
+	public Paquete(int identificador, double volumen, double costo, boolean entregado) {
 		this.identificador = identificador;
 		this.volumen = volumen;
-		this.precio = precio;
+		this.costo = costo;
 		this.entregado = entregado;
 	}
 	
@@ -22,9 +22,7 @@ public abstract class Paquete implements Comparable <Paquete> {
 		return volumen;
 	}
 	
-	public double obtenerPrecio() {
-		return precio;
-	}
+	public abstract double calcularCosto();
 	
 	public boolean estaEntregado(int identificador) {
 		return entregado;

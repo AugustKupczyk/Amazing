@@ -4,9 +4,9 @@ public class PaqueteOrdinario extends Paquete {
 	
 	private double costoDeEnvio;
 	
-	public PaqueteOrdinario(int identificador, double volumen, double precio, 
+	public PaqueteOrdinario(int identificador, double volumen, double costo, 
 										boolean entregado, double costoDeEnvio) {
-		super(identificador, volumen, precio, entregado);
+		super(identificador, volumen, costo, entregado);
 		this.costoDeEnvio = costoDeEnvio;
 	}
 
@@ -16,8 +16,10 @@ public class PaqueteOrdinario extends Paquete {
 		return 0;
 	}
 	
-	public double calcularCostoDeEnvio() {
-		return costoDeEnvio;
+
+	@Override
+	public double calcularCosto() {
+		 return costo + costoDeEnvio;
 	}
 
 }

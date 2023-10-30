@@ -1,36 +1,31 @@
 package amazing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Utilitario extends Transporte {
-	
-	private double valorExtra;
-	
-	public Utilitario(String patente, double volMaxDeCarga, double valorDelViaje, boolean cargado, Paquete paquetes, double valorExtra) {
-		super(patente, volMaxDeCarga, valorDelViaje, cargado, paquetes);
-		valorExtra = this.valorExtra;
-	}
+    private List<PaqueteEspecial> paquetesEspeciales;
+    private List<PaqueteOrdinario> paquetesOrdinarios;
+    private double valorExtra;
 
-	@Override
-	public int compareTo(Object o) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	public int calcularCantidadPaquetes() {
-		return 0;
-	}
-	
-	public double obtenerValorExtra() {
-		return valorExtra;
-	}
+    public Utilitario(String patente, double volMaxDeCarga, double valorDelViaje, double valorExtra) {
+        super(patente, volMaxDeCarga, valorDelViaje);
+        paquetesEspeciales = new ArrayList<>();
+        paquetesOrdinarios = new ArrayList<>();
+        this.valorExtra = valorExtra;
+    }
 
-
-
-	public void setValorExtra(int valorExtra2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
-
+    @Override
+    public void cargarPaquete(Paquete paquete) {
+        if (paquete instanceof PaqueteEspecial) {
+            paquetesEspeciales.add((PaqueteEspecial) paquete);
+            cargar(true);
+        } else if (paquete instanceof PaqueteOrdinario) {
+            paquetesOrdinarios.add((PaqueteOrdinario) paquete);
+            if (paquetesOrdinarios.size() > 3) {
+            	int paquetesExtras = paquetesOrdinarios.size() - 3;
+                valorDelViaje += (paquetesExtras * valorExtra);
+            }
+        }
+    }
 }
-

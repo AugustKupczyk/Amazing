@@ -26,7 +26,7 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public void registrarAutomovil(String patente, int volMax, int valorViaje, int maxPaq) {
-		Automovil automovil = new Automovil(patente, volMax, valorViaje, false, null, maxPaq);
+		Automovil automovil = new Automovil(patente, volMax, valorViaje, maxPaq);
 		if (transportes.containsKey(patente)) {
 			throw new RuntimeException("Ya esta ingresada esta matricula");
 		}
@@ -43,16 +43,11 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public void registrarUtilitario(String patente, int volMax, int valorViaje, int valorExtra) {
-		Utilitario utilitario = new Utilitario(patente, volMax, valorViaje, false, null, valorExtra);
+		Utilitario utilitario = new Utilitario(patente, volMax, valorViaje, valorExtra);
 
 		if (transportes.containsKey(patente)) {
 			throw new RuntimeException("Ya esta ingresada esta matricula");
 
-		}
-
-		if (utilitario.calcularCantidadPaquetes() > 10) {
-			// Aplica el valor extra
-			utilitario.setValorExtra(valorExtra);
 		}
 
 		transportes.put(patente, utilitario);
@@ -60,7 +55,7 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public void registrarCamion(String patente, int volMax, int valorViaje, int adicXPaq) {
-		Camion camion = new Camion(patente, volMax, valorViaje, false, null, adicXPaq);
+		Camion camion = new Camion(patente, volMax, valorViaje, adicXPaq);
 
 		if (transportes.containsKey(patente)) {
 			throw new RuntimeException("Ya esta ingresada esta matricula");
@@ -185,7 +180,7 @@ public class EmpresaAmazing implements IEmpresa {
 			}
 		}
 
-		 throw new RuntimeException("No se encontro"); // Paquete no encontrado o pedido finalizado, devolvemos false
+		throw new RuntimeException("No se encontro"); // Paquete no encontrado o pedido finalizado, devolvemos false
 	}
 
 	@Override
@@ -207,54 +202,30 @@ public class EmpresaAmazing implements IEmpresa {
 		double totalAPagar = costoDeServicio;
 
 		for (Paquete paquete : paquetes) {
-			if (paquete instanceof PaqueteOrdinario) {
-				PaqueteOrdinario paqueteOrdinario = (PaqueteOrdinario) paquete;
-				totalAPagar = paqueteOrdinario.obtenerPrecio() + paqueteOrdinario.calcularCostoDeEnvio();
-			} else if (paquete instanceof PaqueteEspecial) {
-				PaqueteEspecial paqueteEspecial = (PaqueteEspecial) paquete;
-				totalAPagar = paqueteEspecial.obtenerPrecio() + paqueteEspecial.calcularPorcentajeAdicional() + paqueteEspecial.calcularCostoAdicional();
-			}
+			totalAPagar += paquete.calcularCosto();
 		}
 
 		pedido.cerrarPedido();
+
 		return totalAPagar;
 	}
 
 	@Override
 	public String cargarTransporte(String patente) {
-		// TODO Auto-generated method stub
-		
-		// Verificar si la patente está registrada en el sistema
-	    if (!transportes.containsKey(patente)) {
-	        throw new RuntimeException("La patente no está registrada en el sistema.");
-	    }
-		
-		
 		return "";
-	}
 
+	}
+	
 	@Override
 	public double costoEntrega(String patente) {
-	    // Verificar si la patente está registrada en el sistema
-	    if (!transportes.containsKey(patente)) {
-	        throw new RuntimeException("La patente no está registrada en el sistema.");
-	    }
-
-	    // Obtener el transporte correspondiente a la patente
-	    Transporte transporte = transportes.get(patente);
-
-	    // Verificar si el transporte está cargado
-	    if (!transporte.estaCargado()) {
-	        throw new RuntimeException("El transporte no está cargado.");
-	    }
-	    
-	    // Obtener el valor del viaje según la patente proporcionada
-	    return transporte.calcularValorDelViaje(patente);
+		
+		return 0;
 	}
+
 
 	@Override
 	public Map<Integer, String> pedidosNoEntregados() {
-	    return null;
+		return null;
 	}
 
 	@Override
@@ -265,13 +236,14 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public boolean hayTransportesIdenticos() {
-	
+
 		return false;
 	}
-	
-	@Override
-    public String toString() {
-        return "EmpresaAmazing con CUIT: " + cuit;
-    }
 
+	@Override
+	public String toString() {
+		return "EmpresaAmazing con CUIT: " + cuit;
+	}
+
+	
 }

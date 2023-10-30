@@ -1,25 +1,28 @@
 package amazing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Automovil extends Transporte {
-	
-	private double limitePaquetes;
-	
-	public Automovil(String patente, double volMaxDeCarga, double valorDelViaje, boolean cargado, Paquete paquetes, double limitePaquetes) {
-		super(patente, volMaxDeCarga, valorDelViaje, cargado, paquetes);
-		this.limitePaquetes = limitePaquetes;
-	}
+    private double limitePaquetes;
+    private List<PaqueteOrdinario> paquetesOrdinarios;
 
-	@Override
-	public int compareTo(Object o) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	public double obtenerLimitePaquetes() {
-		return limitePaquetes;
-	}
-//	public double identificarVolPaquete() {
-//		return paquetes.
-//	}
+    public Automovil(String patente, double volMaxDeCarga, double valorDelViaje, double limitePaquetes) {
+        super(patente, volMaxDeCarga, valorDelViaje);
+        this.limitePaquetes = limitePaquetes;
+        paquetesOrdinarios = new ArrayList<>();
+    }
 
+    @Override
+    public void cargarPaquete(Paquete paquete) {
+        if (paquete instanceof PaqueteOrdinario) {
+            PaqueteOrdinario paqueteOrdinario = (PaqueteOrdinario) paquete;
+            if (paqueteOrdinario.calcularVolumen() <= 2000 && paquetesOrdinarios.size() < limitePaquetes) {
+                paquetesOrdinarios.add(paqueteOrdinario);
+                cargar(true);
+            }
+        }
+    }
+
+    // Resto de la implementación de la clase Automovil
 }
