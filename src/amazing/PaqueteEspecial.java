@@ -18,20 +18,30 @@ public class PaqueteEspecial extends Paquete {
 	}
 
 	@Override
-	public double calcularCosto() {
-	    double costo = 0;  // Utiliza la variable costo de la clase base
 
-	    costo += costo * (porcentajeAdicional / 100);
+	public double calcularTotalAPagar() {
 
-	    if (volumen > 3000) {
-	        costo += costoAdicional;
-	        if (volumen > 5000) {
-	            costo += costoAdicional; // Duplica el costo adicional
-	        }
-	    }
+		double precioBase = obtenerPrecio();
+		double adicionalPorcentaje = precioBase * (porcentajeAdicional / 100.0);
+		double adicionalVolumen = 0;
 
-	    return costo;
+		double volumen = calcularVolumen();
+
+		if (volumen > 3000) {
+			adicionalVolumen += costoAdicional;
+		}
+
+		if (volumen > 5000) {
+			adicionalVolumen += 2 * costoAdicional;
+		}
+
+		return precioBase + adicionalPorcentaje + adicionalVolumen;
 	}
+
+	@Override
+	public String toString() {
+		return "PaqueteEspecial [porcentajeAdicional=" + porcentajeAdicional + ", costoAdicional=" + costoAdicional
+				+ "]";
+	}
+
 }
-
-

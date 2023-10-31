@@ -18,12 +18,6 @@ public class EmpresaAmazing implements IEmpresa {
 
 	}
 
-	// @Override
-	/*
-	 * public void crear(String cuit) { this.cuit = cuit; pedidos = new HashMap<>();
-	 * transportes = new HashMap<>(); }
-	 */
-
 	@Override
 	public void registrarAutomovil(String patente, int volMax, int valorViaje, int maxPaq) {
 		Automovil automovil = new Automovil(patente, volMax, valorViaje, maxPaq);
@@ -31,25 +25,15 @@ public class EmpresaAmazing implements IEmpresa {
 			throw new RuntimeException("Ya esta ingresada esta matricula");
 		}
 		transportes.put(patente, automovil);
-		// falta cantidad maxima de paquetes que transporta
-	}
 
-//	private Transporte verificarPatente(String patente) {
-//		if (transportes.containsKey(patente)){
-//			return transportes.get(patente);
-//		}
-//		return throw new RuntimeException("Ya existe patente en el sistema");
-//	}
+	}
 
 	@Override
 	public void registrarUtilitario(String patente, int volMax, int valorViaje, int valorExtra) {
 		Utilitario utilitario = new Utilitario(patente, volMax, valorViaje, valorExtra);
-
 		if (transportes.containsKey(patente)) {
 			throw new RuntimeException("Ya esta ingresada esta matricula");
-
 		}
-
 		transportes.put(patente, utilitario);
 	}
 
@@ -67,17 +51,13 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public int registrarPedido(String cliente, String direccion, int dni) {
-		// Create a new Cliente
+
 		Cliente clienteObj = new Cliente(cliente, dni, direccion);
 
-		// Create an empty Carrito (cart)
-		Carrito carrito = new Carrito(0); // You might want to initialize the Carrito differently, depending on
-											// your implementation.
+		Carrito carrito = new Carrito(0);
 
-		// Create a new Pedido with both the Cliente and Carrito
 		Pedido pedido = new Pedido(0, clienteObj, 0, false, carrito, false);
 
-		// Add the Pedido to the pedidos HashMap
 		pedidos.put(pedido.validarNroPedido(), pedido);
 
 		return pedido.validarNroPedido();
@@ -85,28 +65,29 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public int agregarPaquete(int codPedido, int volumen, int precio, int costoEnvio) {
-		// Verificar si el pedido existe en el sistema
+
 		if (!pedidos.containsKey(codPedido)) {
 			throw new RuntimeException("El pedido no está registrado en el sistema.");
 		}
 
-		// Obtener el pedido correspondiente
 		Pedido pedido = pedidos.get(codPedido);
 
-		// Verificar si el pedido ya está finalizado
 		if (pedido.estaEntregado()) {
 			throw new RuntimeException("El pedido ya está finalizado.");
 		}
 
-		// Crear un paquete de tipo ordinario y asignar un código único
+		if (pedido.estaCerrado()) {
+			throw new RuntimeException("El pedido ya está cerrado.");
+		}
+
+		// Creamos un paquete de tipo ordinario y asignamos un código único
 		int codigoUnicoPaquete = generarCodigoUnicoPaquete();
 		PaqueteOrdinario paquete = new PaqueteOrdinario(codigoUnicoPaquete, volumen, precio, false, costoEnvio);
 
-		// Agregar el paquete al carrito del pedido
 		Carrito carrito = pedido.obtenerCarrito();
+
 		carrito.agregarPaquete(paquete);
 
-		// Devolver el código único del paquete
 		return codigoUnicoPaquete;
 	}
 
@@ -121,70 +102,71 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public int agregarPaquete(int codPedido, int volumen, int precio, int porcentajeAdicional, int adicional) {
-		// Verificar si el pedido existe en el sistema
+
 		if (!pedidos.containsKey(codPedido)) {
 			throw new RuntimeException("El pedido no está registrado en el sistema.");
 		}
 
-		// Obtener el pedido correspondiente
 		Pedido pedido = pedidos.get(codPedido);
 
-		// Verificar si el pedido ya está finalizado
 		if (pedido.estaEntregado()) {
 			throw new RuntimeException("El pedido ya está finalizado.");
 		}
 
-		// Calcular el precio con el porcentaje adicional (si es mayor a 0)
+		if (pedido.estaCerrado()) {
+			throw new RuntimeException("El pedido ya está cerrado.");
+		}
+
+		// Calculamos el precio con el porcentaje adicional (si es mayor a 0)
 		double precioConAdicional = precio;
 		if (porcentajeAdicional > 0) {
 			precioConAdicional += (precio * porcentajeAdicional / 100.0);
 		}
 
-		// Verificar si se agrega el adicional
+		// Verificamos si se agrega el adicional
 		if (volumen > 3000) {
 			precioConAdicional += adicional;
 		}
 
-		// Crear un paquete de tipo especial y asignar un código único
+		// Creamos un paquete de tipo especial y asignamos un código único
 		int codigoUnicoPaquete = generarCodigoUnicoPaquete();
 		PaqueteEspecial paquete = new PaqueteEspecial(codigoUnicoPaquete, volumen, precioConAdicional, false,
 				porcentajeAdicional, adicional);
 
-		// Agregar el paquete al carrito del pedido
+		// Agregamos el paquete al carrito del pedido
 		Carrito carrito = pedido.obtenerCarrito();
 		carrito.agregarPaquete(paquete);
 
-		// Devolver el código único del paquete
 		return codigoUnicoPaquete;
 	}
 
 	@Override
 	public boolean quitarPaquete(int codPaquete) {
-		// Complejidad en términos de O grande: O(N * M), donde N es el número de
-		// pedidos y M es el número promedio de paquetes en cada carrito.
 
 		for (Pedido pedido : pedidos.values()) {
-			// Verificar si el pedido no está finalizado
+
 			if (!pedido.estaEntregado()) {
 				Carrito carrito = pedido.obtenerCarrito();
 				List<Paquete> paquetes = carrito.obtenerPaquetes();
 
-				// Buscar el paquete en el carrito del pedido
+				// Buscamos el paquete en el carrito del pedido
 				for (Paquete paquete : paquetes) {
 					if (paquete.obtenerIdentificador() == codPaquete) {
-						// Eliminar el paquete del carrito
+
+						// Eliminamos el paquete del carrito
 						carrito.eliminarPaquete(paquete);
-						return true; // Paquete encontrado y eliminado, devolvemos true
+						return true;
 					}
 				}
 			}
 		}
 
-		throw new RuntimeException("No se encontro"); // Paquete no encontrado o pedido finalizado, devolvemos false
+		throw new RuntimeException("No se encontro");
 	}
 
 	@Override
 	public double cerrarPedido(int codPedido) {
+
 		Pedido pedido = pedidos.get(codPedido);
 
 		if (pedido == null) {
@@ -202,11 +184,10 @@ public class EmpresaAmazing implements IEmpresa {
 		double totalAPagar = costoDeServicio;
 
 		for (Paquete paquete : paquetes) {
-			totalAPagar += paquete.calcularCosto();
+			totalAPagar += paquete.calcularTotalAPagar();
+
 		}
-
 		pedido.cerrarPedido();
-
 		return totalAPagar;
 	}
 
@@ -215,17 +196,31 @@ public class EmpresaAmazing implements IEmpresa {
 		return "";
 
 	}
-	
+
 	@Override
 	public double costoEntrega(String patente) {
-		
-		return 0;
-	}
+		// Verificar si la patente está registrada en el sistema
+		if (!transportes.containsKey(patente)) {
+			throw new RuntimeException("La patente no está registrada en el sistema.");
+		}
 
+		// Obtener el transporte correspondiente a la patente
+		Transporte transporte = transportes.get(patente);
+
+		// Verificar si el transporte está cargado
+		if (!transporte.estaCargado()) {
+			throw new RuntimeException("El transporte no está cargado.");
+		}
+
+		// Obtener el valor del viaje según la patente proporcionada
+		return transporte.calcularValorDelViaje(patente);
+	}
 
 	@Override
 	public Map<Integer, String> pedidosNoEntregados() {
+
 		return null;
+
 	}
 
 	@Override
@@ -245,5 +240,4 @@ public class EmpresaAmazing implements IEmpresa {
 		return "EmpresaAmazing con CUIT: " + cuit;
 	}
 
-	
 }

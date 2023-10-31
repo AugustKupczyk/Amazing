@@ -1,7 +1,7 @@
 package amazing;
 
 public class Pedido {
-	
+
 	private int numeroDePedido;
 	private Cliente cliente;
 	private double costoDeServicio;
@@ -9,8 +9,8 @@ public class Pedido {
 	private Carrito carrito;
 	private boolean cerrado;
 
-	
-	public Pedido(int numeroDePedido, Cliente cliente, double costoDeServicio, boolean entregado,Carrito carrito, boolean cerrado) {
+	public Pedido(int numeroDePedido, Cliente cliente, double costoDeServicio, boolean entregado, Carrito carrito,
+			boolean cerrado) {
 		super();
 		this.numeroDePedido = numeroDePedido;
 		this.cliente = cliente;
@@ -19,38 +19,43 @@ public class Pedido {
 		this.carrito = carrito;
 		this.cerrado = cerrado;
 	}
-	
+
 	public double obtenerCostoDeServicio() {
 		return costoDeServicio;
 	}
-	
+
 	public int validarNroPedido() {
 		return numeroDePedido;
 	}
-	
+
 	public Carrito obtenerCarrito() {
 		return carrito;
 	}
-	
-	
+
 	public boolean estaEntregado() {
 		return entregado;
 	}
-	
+
 	public void entregarPedido() {
 		entregado = true;
 	}
-	
+
 	public boolean estaCerrado() {
 		return cerrado;
 	}
-	
+
 	public void cerrarPedido() {
-		 cerrado = true;
+		cerrado = true;
 	}
-	
+
 	public Cliente obtenerCliente() {
 		return cliente;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Pedido [numeroDePedido=" + numeroDePedido + ", cliente=" + cliente + ", costoDeServicio="
+				+ costoDeServicio + ", entregado=" + entregado + ", carrito=" + carrito + ", cerrado=" + cerrado + "]";
+	}
+
 }
