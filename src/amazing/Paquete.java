@@ -24,12 +24,18 @@ public abstract class Paquete implements Comparable<Paquete> {
 
 	public abstract double calcularTotalAPagar();
 
-	public boolean estaEntregado(int identificador) {
+	public boolean estaEntregado() {
 		return entregado;
 	}
 
 	public double obtenerPrecio() {
 		return precio;
+	}
+
+	@Override
+	public int compareTo(Paquete o) {
+		// Puedes comparar paquetes según algún criterio, como el identificador.
+		return Integer.compare(this.identificador, o.identificador);
 	}
 
 	@Override

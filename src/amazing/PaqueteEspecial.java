@@ -13,25 +13,18 @@ public class PaqueteEspecial extends Paquete {
 	}
 
 	@Override
-	public int compareTo(Paquete o) {
-		return 0;
-	}
-
-	@Override
-
 	public double calcularTotalAPagar() {
-
-		double precioBase = obtenerPrecio();
+		double precioBase = super.obtenerPrecio();
 		double adicionalPorcentaje = precioBase * (porcentajeAdicional / 100.0);
 		double adicionalVolumen = 0;
 
-		double volumen = calcularVolumen();
-
-		if (volumen > 3000) {
+		// Utilizamos el volumen de la instancia actual para evitar confusión con el
+		// atributo de la clase.
+		if (this.volumen > 3000) {
 			adicionalVolumen += costoAdicional;
 		}
 
-		if (volumen > 5000) {
+		if (this.volumen > 5000) {
 			adicionalVolumen += 2 * costoAdicional;
 		}
 
@@ -42,6 +35,13 @@ public class PaqueteEspecial extends Paquete {
 	public String toString() {
 		return "PaqueteEspecial [porcentajeAdicional=" + porcentajeAdicional + ", costoAdicional=" + costoAdicional
 				+ "]";
+	}
+
+	@Override
+	public int compareTo(Paquete o) {
+		// Comparación basada en el volumen (ejemplo, puedes ajustarlo según tus
+		// necesidades).
+		return Double.compare(this.volumen, o.volumen);
 	}
 
 }

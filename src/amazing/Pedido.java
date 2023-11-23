@@ -1,18 +1,19 @@
 package amazing;
 
+
 public class Pedido {
 
-	private int numeroDePedido;
+	private int codPedido;
 	private Cliente cliente;
 	private double costoDeServicio;
 	private boolean entregado;
 	private Carrito carrito;
 	private boolean cerrado;
 
-	public Pedido(int numeroDePedido, Cliente cliente, double costoDeServicio, boolean entregado, Carrito carrito,
+	public Pedido(int codPedido, Cliente cliente, double costoDeServicio, boolean entregado, Carrito carrito,
 			boolean cerrado) {
 		super();
-		this.numeroDePedido = numeroDePedido;
+		this.codPedido = codPedido;
 		this.cliente = cliente;
 		this.costoDeServicio = costoDeServicio;
 		this.entregado = entregado;
@@ -24,8 +25,8 @@ public class Pedido {
 		return costoDeServicio;
 	}
 
-	public int validarNroPedido() {
-		return numeroDePedido;
+	public int obtenerCodPedido() {
+		return codPedido;
 	}
 
 	public Carrito obtenerCarrito() {
@@ -45,17 +46,26 @@ public class Pedido {
 	}
 
 	public void cerrarPedido() {
-		cerrado = true;
-	}
+			cerrado = true;
+		}
+	
 
 	public Cliente obtenerCliente() {
 		return cliente;
 	}
 
+	public void agregarPaquete(Paquete paquete) {
+		if (!estaCerrado()) {
+			carrito.agregarPaquete(paquete);
+		} else {
+			System.out.println("No se pueden agregar paquetes a un pedido cerrado.");
+		}
+	}
+
 	@Override
 	public String toString() {
-		return "Pedido [numeroDePedido=" + numeroDePedido + ", cliente=" + cliente + ", costoDeServicio="
-				+ costoDeServicio + ", entregado=" + entregado + ", carrito=" + carrito + ", cerrado=" + cerrado + "]";
+		return "Pedido [numeroDePedido=" + codPedido + ", cliente=" + cliente + ", costoDeServicio=" + costoDeServicio
+				+ ", entregado=" + entregado + ", carrito=" + carrito + ", cerrado=" + cerrado + "]";
 	}
 
 }

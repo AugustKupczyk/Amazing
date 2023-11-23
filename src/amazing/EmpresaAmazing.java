@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class EmpresaAmazing implements IEmpresa {
 	private String cuit;
-	private HashMap<Integer, Pedido> pedidos;
+	private Map<Integer, Pedido> pedidos;
 	private HashMap<String, Transporte> transportes;
 
 	public EmpresaAmazing(String cuit) {
@@ -58,9 +58,9 @@ public class EmpresaAmazing implements IEmpresa {
 
 		Pedido pedido = new Pedido(0, clienteObj, 0, false, carrito, false);
 
-		pedidos.put(pedido.validarNroPedido(), pedido);
+		pedidos.put(pedido.obtenerCodPedido(), pedido);
 
-		return pedido.validarNroPedido();
+		return pedido.obtenerCodPedido();
 	}
 
 	@Override
@@ -166,54 +166,39 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public double cerrarPedido(int codPedido) {
+		Pedido pedido = buscarPedidoPorCodigo(codPedido);
 
-		Pedido pedido = pedidos.get(codPedido);
-
-		if (pedido == null) {
-			throw new RuntimeException("El pedido no está registrado en el sistema.");
+		if (pedido.estaCerrado()) {
+			throw new IllegalStateException("El pedido ya ha sido cerrado anteriormente.");
 		}
 
-		if (pedido.estaEntregado()) {
-			throw new RuntimeException("El pedido ya ha sido finalizado.");
-		}
+		// Retornar el costo total del pedido
+		return calcularCostoPedido(pedido);
+	}
 
-		double costoDeServicio = pedido.obtenerCostoDeServicio();
+	private double calcularCostoPedido(Pedido pedido) {
+		double costoTotalPedido = pedido.obtenerCostoDeServicio();
+
 		Carrito carrito = pedido.obtenerCarrito();
 		List<Paquete> paquetes = carrito.obtenerPaquetes();
 
-		double totalAPagar = costoDeServicio;
-
 		for (Paquete paquete : paquetes) {
-			totalAPagar += paquete.calcularTotalAPagar();
-
+			costoTotalPedido += paquete.calcularTotalAPagar();
 		}
-		pedido.cerrarPedido();
-		return totalAPagar;
+
+		return costoTotalPedido;
+	}
+
+	private Pedido buscarPedidoPorCodigo(int codPedido) {
+		if (pedidos.containsKey(codPedido))
+			return pedidos.get(codPedido);
+		throw new RuntimeException("Pedido no registrado");
 	}
 
 	@Override
 	public String cargarTransporte(String patente) {
 		return "";
 
-	}
-
-	@Override
-	public double costoEntrega(String patente) {
-		// Verificar si la patente está registrada en el sistema
-		if (!transportes.containsKey(patente)) {
-			throw new RuntimeException("La patente no está registrada en el sistema.");
-		}
-
-		// Obtener el transporte correspondiente a la patente
-		Transporte transporte = transportes.get(patente);
-
-		// Verificar si el transporte está cargado
-		if (!transporte.estaCargado()) {
-			throw new RuntimeException("El transporte no está cargado.");
-		}
-
-		// Obtener el valor del viaje según la patente proporcionada
-		return transporte.calcularValorDelViaje(patente);
 	}
 
 	@Override
@@ -225,8 +210,16 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public double facturacionTotalPedidosCerrados() {
-		// TODO Auto-generated method stub
-		return 0;
+		double facturacionTotal = 0;
+
+		// Iterar sobre los pedidos cerrados y facturar
+		for (Pedido pedido : pedidos.values()) {
+			if (pedido.estaCerrado()) {
+				facturacionTotal += calcularCostoPedido(pedido);
+			}
+		}
+
+		return facturacionTotal;
 	}
 
 	@Override
@@ -238,6 +231,12 @@ public class EmpresaAmazing implements IEmpresa {
 	@Override
 	public String toString() {
 		return "EmpresaAmazing con CUIT: " + cuit;
+	}
+
+	@Override
+	public double costoEntrega(String patente) {
+
+		return 0;
 	}
 
 }

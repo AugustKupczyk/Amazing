@@ -15,24 +15,33 @@ public class Utilitario extends Transporte {
 		this.valorExtra = valorExtra;
 	}
 
-	@Override
-	public void cargarPaquete(Paquete paquete) {
-		if (paquete instanceof PaqueteEspecial) {
-			paquetesEspeciales.add((PaqueteEspecial) paquete);
-			cargar(true);
-		} else if (paquete instanceof PaqueteOrdinario) {
-			paquetesOrdinarios.add((PaqueteOrdinario) paquete);
-			if (paquetesOrdinarios.size() > 3) {
-				int paquetesExtras = paquetesOrdinarios.size() - 3;
-				valorDelViaje += (paquetesExtras * valorExtra);
-			}
-		}
-	}
+
+	 @Override
+	    public void cargarPaquete(Paquete paquete) {
+	        if (paquete instanceof PaqueteEspecial) {
+	            cargarPaqueteEspecial((PaqueteEspecial) paquete);
+	        } else if (paquete instanceof PaqueteOrdinario) {
+	            cargarPaqueteOrdinario((PaqueteOrdinario) paquete);
+	        }
+	    }
+
+	    private void cargarPaqueteEspecial(PaqueteEspecial paqueteEspecial) {
+	        paquetesEspeciales.add(paqueteEspecial);
+	        cargar();
+	    }
+
+	    private void cargarPaqueteOrdinario(PaqueteOrdinario paqueteOrdinario) {
+	        paquetesOrdinarios.add(paqueteOrdinario);
+	        if (paquetesOrdinarios.size() > 3) {
+	            int paquetesExtras = paquetesOrdinarios.size() - 3;
+	            valorDelViaje += (paquetesExtras * valorExtra);
+	        }
+	    }
 
 	@Override
-	protected double calcularValorDelViaje(String patente) {
+	protected double calcularValorDelViaje() {
 
-		return super.calcularValorDelViaje(patente);
+		return super.calcularValorDelViaje();
 	}
 
 	@Override

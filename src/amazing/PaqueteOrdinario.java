@@ -9,11 +9,6 @@ public class PaqueteOrdinario extends Paquete {
 		this.costoDeEnvio = costoDeEnvio;
 	}
 
-	@Override
-	public int compareTo(Paquete o) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	public double calcularCostoDeEnvio() {
 		return costoDeEnvio;
@@ -21,12 +16,18 @@ public class PaqueteOrdinario extends Paquete {
 
 	@Override
 	public double calcularTotalAPagar() {
-		return obtenerPrecio() + calcularCostoDeEnvio();
+		return super.obtenerPrecio() + calcularCostoDeEnvio();
 	}
 
 	@Override
 	public String toString() {
 		return "PaqueteOrdinario [costoDeEnvio=" + costoDeEnvio + "]";
+	}
+
+	@Override
+	public int compareTo(Paquete o) {
+		// Comparación simple basada en el identificador.
+		return Integer.compare(this.obtenerIdentificador(), o.obtenerIdentificador());
 	}
 
 }

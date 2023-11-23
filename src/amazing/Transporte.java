@@ -22,11 +22,11 @@ public abstract class Transporte {
 		return cargado;
 	}
 
-	protected void cargar(boolean cargado) {
-		this.cargado = cargado;
+	protected void cargar() {
+		cargado = true;
 	}
 
-	protected double calcularValorDelViaje(String patente) {
+	protected double calcularValorDelViaje() {
 		return valorDelViaje;
 	}
 
@@ -49,8 +49,5 @@ public abstract class Transporte {
 		return "Transporte [patente=" + patente + ", volMaxDeCarga=" + volMaxDeCarga + ", valorDelViaje="
 				+ valorDelViaje + ", cargado=" + cargado + ", paquetes=" + paquetes + "]";
 	}
-
-
-
 
 }
