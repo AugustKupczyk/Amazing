@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Carrito {
-	private int id;
 	private List<Paquete> paquetesAEntregar;
 
-	public Carrito(int id) {
-		this.id = id;
+	public Carrito() {
 		paquetesAEntregar = new ArrayList<>();
 	}
 
@@ -26,7 +24,7 @@ public class Carrito {
 
 	@Override
 	public String toString() {
-		return "Carrito [id=" + id + ", paquetesAEntregar=" + paquetesAEntregar + "]";
+		return "Carrito [id=" +  ", paquetesAEntregar=" + paquetesAEntregar + "]";
 	}
 
 	

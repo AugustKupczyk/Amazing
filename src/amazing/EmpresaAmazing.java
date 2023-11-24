@@ -8,6 +8,9 @@ public class EmpresaAmazing implements IEmpresa {
 	private String cuit;
 	private Map<Integer, Pedido> pedidos;
 	private HashMap<String, Transporte> transportes;
+	private int codPedido;
+	private int codPaquete;
+	private double facturacionTotal;
 
 	public EmpresaAmazing(String cuit) {
 
@@ -15,7 +18,9 @@ public class EmpresaAmazing implements IEmpresa {
 		this.cuit = cuit;
 		pedidos = new HashMap<>();
 		transportes = new HashMap<>();
-
+		this.codPedido = 0;
+		this.codPaquete = 0;
+		facturacionTotal = 0;
 	}
 
 	@Override
@@ -40,203 +45,215 @@ public class EmpresaAmazing implements IEmpresa {
 	@Override
 	public void registrarCamion(String patente, int volMax, int valorViaje, int adicXPaq) {
 		Camion camion = new Camion(patente, volMax, valorViaje, adicXPaq);
-
 		if (transportes.containsKey(patente)) {
 			throw new RuntimeException("Ya esta ingresada esta matricula");
-
 		}
-
 		transportes.put(patente, camion);
 	}
 
+	/**
+	 * Se registra un nuevo pedido en el sistema proporcionando los siguientes
+	 * datos: - el nombre del cliente que lo solicita - su dirección - su dni
+	 * 
+	 * El sistema le asigna un numero de pedido unico y crea un carrito de ventas
+	 * vacio. Devuelve el numero de pedido asignado.
+	 * 
+	 */
+
 	@Override
 	public int registrarPedido(String cliente, String direccion, int dni) {
-
-		Cliente clienteObj = new Cliente(cliente, dni, direccion);
-
-		Carrito carrito = new Carrito(0);
-
-		Pedido pedido = new Pedido(0, clienteObj, 0, false, carrito, false);
-
-		pedidos.put(pedido.obtenerCodPedido(), pedido);
-
-		return pedido.obtenerCodPedido();
+		Cliente c = new Cliente(cliente, dni, direccion);
+		Carrito carrito = new Carrito();
+		Pedido p = new Pedido(codPedido, c, false, carrito, false);
+		pedidos.put(codPedido, p);
+		codPedido++;
+		System.out.println(codPedido);
+		return codPedido;
 	}
+
+	/**
+	 * Se registra la compra de un producto, el cual se agregara al carrito del
+	 * pedido dado como un paquete de tipo ordinario.
+	 * 
+	 * Se ingresan los datos necesario para agregarlo: - pedido al que corresponde
+	 * agregarlo - volumen del paquete a agregar - precio del producto que contiene
+	 * el paquete.
+	 * 
+	 * Ademas por ser un paquete de tipo ordinario: - costo del envio
+	 * 
+	 * Si ese pedido no esta registrado en el sistema o ya está finalizado se debe
+	 * generar una excepcion.
+	 * 
+	 * devuelve el codigo de paquete unico.
+	 * 
+	 */
 
 	@Override
 	public int agregarPaquete(int codPedido, int volumen, int precio, int costoEnvio) {
+		Pedido p = buscarPedido(codPedido);
+		PaqueteOrdinario paquete = new PaqueteOrdinario(codPaquete, volumen, precio, false, costoEnvio);
+		p.obtenerCarrito().obtenerPaquetes().add(paquete);
 
-		if (!pedidos.containsKey(codPedido)) {
-			throw new RuntimeException("El pedido no está registrado en el sistema.");
-		}
-
-		Pedido pedido = pedidos.get(codPedido);
-
-		if (pedido.estaEntregado()) {
-			throw new RuntimeException("El pedido ya está finalizado.");
-		}
-
-		if (pedido.estaCerrado()) {
-			throw new RuntimeException("El pedido ya está cerrado.");
-		}
-
-		// Creamos un paquete de tipo ordinario y asignamos un código único
-		int codigoUnicoPaquete = generarCodigoUnicoPaquete();
-		PaqueteOrdinario paquete = new PaqueteOrdinario(codigoUnicoPaquete, volumen, precio, false, costoEnvio);
-
-		Carrito carrito = pedido.obtenerCarrito();
-
-		carrito.agregarPaquete(paquete);
-
-		return codigoUnicoPaquete;
+		return codPaquete;
 	}
 
-	// Método para generar un código único para el paquete
-	private static int codigoUnicoPaquete = 1; // Inicializamos el contador en 1
-
-	private int generarCodigoUnicoPaquete() {
-		int codigo = codigoUnicoPaquete;
-		codigoUnicoPaquete++; // Incrementa el contador para el próximo paquete
-		return codigo;
+	private Pedido buscarPedido(int codPedido) {
+		if (pedidos.containsKey(codPedido)) {
+			return pedidos.get(codPedido);
+		}
+		throw new RuntimeException("El pedido no está registrado en el sistema.");
 	}
 
 	@Override
-	public int agregarPaquete(int codPedido, int volumen, int precio, int porcentajeAdicional, int adicional) {
+	public int agregarPaquete(int codPedido, int volumen, int precio, int porcentaje, int adicional) {
+		Pedido p = buscarPedido(codPedido);
+		PaqueteEspecial paquete = new PaqueteEspecial(codPaquete, volumen, precio, false, porcentaje, adicional);
+		p.obtenerCarrito().obtenerPaquetes().add(paquete);
 
-		if (!pedidos.containsKey(codPedido)) {
-			throw new RuntimeException("El pedido no está registrado en el sistema.");
-		}
-
-		Pedido pedido = pedidos.get(codPedido);
-
-		if (pedido.estaEntregado()) {
-			throw new RuntimeException("El pedido ya está finalizado.");
-		}
-
-		if (pedido.estaCerrado()) {
-			throw new RuntimeException("El pedido ya está cerrado.");
-		}
-
-		// Calculamos el precio con el porcentaje adicional (si es mayor a 0)
-		double precioConAdicional = precio;
-		if (porcentajeAdicional > 0) {
-			precioConAdicional += (precio * porcentajeAdicional / 100.0);
-		}
-
-		// Verificamos si se agrega el adicional
-		if (volumen > 3000) {
-			precioConAdicional += adicional;
-		}
-
-		// Creamos un paquete de tipo especial y asignamos un código único
-		int codigoUnicoPaquete = generarCodigoUnicoPaquete();
-		PaqueteEspecial paquete = new PaqueteEspecial(codigoUnicoPaquete, volumen, precioConAdicional, false,
-				porcentajeAdicional, adicional);
-
-		// Agregamos el paquete al carrito del pedido
-		Carrito carrito = pedido.obtenerCarrito();
-		carrito.agregarPaquete(paquete);
-
-		return codigoUnicoPaquete;
+		return codPaquete;
 	}
+
+//	**
+//	 * quita un paquete del pedido dado su codigo unico de paquete.
+//	 * 
+//	 * Devuelve true si pudo quitar el paquete. 
+//	 * si no lo encontró o  el pedido ya esta finalizado, devuelve false.
+//	 * 
+//	 * Demostrar la complejidad en terminos de O grande en el informe.
+//	 */
 
 	@Override
 	public boolean quitarPaquete(int codPaquete) {
-
-		for (Pedido pedido : pedidos.values()) {
-
-			if (!pedido.estaEntregado()) {
-				Carrito carrito = pedido.obtenerCarrito();
-				List<Paquete> paquetes = carrito.obtenerPaquetes();
-
-				// Buscamos el paquete en el carrito del pedido
-				for (Paquete paquete : paquetes) {
-					if (paquete.obtenerIdentificador() == codPaquete) {
-
-						// Eliminamos el paquete del carrito
-						carrito.eliminarPaquete(paquete);
-						return true;
-					}
-				}
-			}
-		}
-
-		throw new RuntimeException("No se encontro");
+		Pedido p = buscarPedido(codPedido);
+		p.obtenerCarrito().obtenerPaquetes().remove(codPaquete);
+		return true;
 	}
+
+	/**
+	 * Se registra la finalizacion de un pedido registrado en la empresa, dado su
+	 * codigo. Devuelve el total a pagar por el pedido.
+	 * 
+	 * Si ese codigo no esta en el sistema o ya fue finalizado se debe generar una
+	 * excepcion.
+	 *
+	 */
 
 	@Override
 	public double cerrarPedido(int codPedido) {
-		Pedido pedido = buscarPedidoPorCodigo(codPedido);
-
-		if (pedido.estaCerrado()) {
+		double totalAFacturar = 0;
+		Pedido p = buscarPedido(codPedido);
+		if (p.estaCerrado()) {
 			throw new IllegalStateException("El pedido ya ha sido cerrado anteriormente.");
 		}
-
-		// Retornar el costo total del pedido
-		return calcularCostoPedido(pedido);
-	}
-
-	private double calcularCostoPedido(Pedido pedido) {
-		double costoTotalPedido = pedido.obtenerCostoDeServicio();
-
-		Carrito carrito = pedido.obtenerCarrito();
-		List<Paquete> paquetes = carrito.obtenerPaquetes();
-
-		for (Paquete paquete : paquetes) {
-			costoTotalPedido += paquete.calcularTotalAPagar();
+		for (Paquete paquete : p.obtenerCarrito().obtenerPaquetes()) {
+			totalAFacturar += paquete.calcularTotalAPagar();
 		}
+		p.cerrarPedido();
 
-		return costoTotalPedido;
+		facturacionTotal += totalAFacturar;
+
+		return totalAFacturar;
 	}
 
-	private Pedido buscarPedidoPorCodigo(int codPedido) {
-		if (pedidos.containsKey(codPedido))
-			return pedidos.get(codPedido);
-		throw new RuntimeException("Pedido no registrado");
-	}
+	/**
+	 * Se solicita la carga de un transporte registrado en la empresa, dada su
+	 * patente.
+	 * 
+	 * Devuelve un String con forma de listado donde cada renglón representa un
+	 * paquete cargado. Cada renglón debe respetar el siguiente formato: " + [
+	 * NroPedido - codPaquete ] direccion" por ejemplo: " + [ 1002 - 101 ] Gutierrez
+	 * 1147"
+	 *
+	 * Los paquetes que se cargan deben pertenecer a pedidos finaizados. Si no se
+	 * encontró ningún paquete para cargar, se debe devolver un string vacio.
+	 * 
+	 * Si esa patente no esta en el sistema se debe generar una excepcion.
+	 * 
+	 */
 
 	@Override
 	public String cargarTransporte(String patente) {
-		return "";
+//		String s = "";
+//		Pedido p = buscarPedido(codPedido);
+//		Transporte t = buscarTransporte(patente);
+//		if (t.estaCargado()) {
+//			return "El transporte con patente " + patente + " ya está cargado.";
+//		}
+//		
+//		for(Paquete p2: t.identificarPaquetes()) {
+//			s = s + "[" + p.obtenerCodPedido() + " - " + codPaquete  + "]" + p.obtenerCliente().obtenerDireccion();
+//		}
 
+		return "";
 	}
+
+	private Transporte buscarTransporte(String patente) {
+		if (transportes.containsKey(patente)) {
+			return transportes.get(patente);
+		}
+		throw new RuntimeException("El transporte no está registrado en el sistema.");
+	}
+
+	/**
+	 * Se solicita el costo del viaje de un transporte dado su patente Este costo es
+	 * el que cobra el transporte (a la empresa) por entregar la carga una vez que
+	 * fue cargado con los paquetes.
+	 * 
+	 * Una vez cargado, aunque no se haya podido completar, el transporte reparte
+	 * los paquetes cargados.
+	 * 
+	 * Se devuelve el valor del viaje segun lo indicado en cada tipo de transporte.
+	 * Cada tipo de transporte tiene su forma de calcular el costo del viaje.
+	 * 
+	 * Si esa patente no esta en el sistema se debe generar una excepcion. Si el
+	 * transporte no esta cargado genera un excepcion.
+	 * 
+	 * En O(1)
+	 */
+
+	@Override
+	public double costoEntrega(String patente) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * Devuelve los pedidos cerrados y que no fueron entregados en su totalidad. O
+	 * sea, que tienen paquetes sin entregar.
+	 * 
+	 * Devuelve un diccionario cuya clave es el codigo del pedido y el valor es el
+	 * nombre del cliente que lo pidio.
+	 * 
+	 */
 
 	@Override
 	public Map<Integer, String> pedidosNoEntregados() {
 
 		return null;
-
 	}
+
+	/**
+	 * Devuelve la suma del precio facturado de todos los pedidos cerrados.
+	 * 
+	 * Se debe realizar esta operacion en O(1).
+	 */
 
 	@Override
 	public double facturacionTotalPedidosCerrados() {
-		double facturacionTotal = 0;
-
-		// Iterar sobre los pedidos cerrados y facturar
-		for (Pedido pedido : pedidos.values()) {
-			if (pedido.estaCerrado()) {
-				facturacionTotal += calcularCostoPedido(pedido);
-			}
-		}
-
 		return facturacionTotal;
 	}
 
+	/**
+	 * Se consideran transportes identicos a 2 transportes cargados con: - distinta
+	 * patente, - mismo tipo y - la misma carga. Se considera misma carga al tener
+	 * la misma cantidad de paquetes con las mismas caracteristicas: - mismo
+	 * volumen, - mismo tipo - mismo precio y - mismos atributos según el tipo de
+	 * Paquete VER EJEMPLO EN ENUNCIADO
+	 */
+
 	@Override
 	public boolean hayTransportesIdenticos() {
-
+		// TODO Auto-generated method stub
 		return false;
 	}
-
-	@Override
-	public String toString() {
-		return "EmpresaAmazing con CUIT: " + cuit;
-	}
-
-	@Override
-	public double costoEntrega(String patente) {
-
-		return 0;
-	}
-
 }

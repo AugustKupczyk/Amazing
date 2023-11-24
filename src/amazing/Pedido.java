@@ -1,32 +1,28 @@
 package amazing;
 
-
 public class Pedido {
-
+	
 	private int codPedido;
 	private Cliente cliente;
-	private double costoDeServicio;
 	private boolean entregado;
 	private Carrito carrito;
 	private boolean cerrado;
 
-	public Pedido(int codPedido, Cliente cliente, double costoDeServicio, boolean entregado, Carrito carrito,
-			boolean cerrado) {
-		super();
+	public Pedido(int codPedido,Cliente cliente, boolean entregado, Carrito carrito, boolean cerrado) {
 		this.codPedido = codPedido;
 		this.cliente = cliente;
-		this.costoDeServicio = costoDeServicio;
 		this.entregado = entregado;
 		this.carrito = carrito;
 		this.cerrado = cerrado;
 	}
 
-	public double obtenerCostoDeServicio() {
-		return costoDeServicio;
-	}
-
+	
 	public int obtenerCodPedido() {
 		return codPedido;
+	}
+	
+	public Cliente obtenerCliente() {
+		return cliente;
 	}
 
 	public Carrito obtenerCarrito() {
@@ -46,12 +42,7 @@ public class Pedido {
 	}
 
 	public void cerrarPedido() {
-			cerrado = true;
-		}
-	
-
-	public Cliente obtenerCliente() {
-		return cliente;
+		cerrado = true;
 	}
 
 	public void agregarPaquete(Paquete paquete) {
@@ -64,8 +55,8 @@ public class Pedido {
 
 	@Override
 	public String toString() {
-		return "Pedido [numeroDePedido=" + codPedido + ", cliente=" + cliente + ", costoDeServicio=" + costoDeServicio
-				+ ", entregado=" + entregado + ", carrito=" + carrito + ", cerrado=" + cerrado + "]";
+		return "Pedido [numeroDePedido=" + ", cliente=" + cliente + ", entregado=" + entregado + ", carrito=" + carrito
+				+ ", cerrado=" + cerrado + "]";
 	}
 
 }

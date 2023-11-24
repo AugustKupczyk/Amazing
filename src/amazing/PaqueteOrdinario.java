@@ -16,7 +16,7 @@ public class PaqueteOrdinario extends Paquete {
 
 	@Override
 	public double calcularTotalAPagar() {
-		return super.obtenerPrecio() + calcularCostoDeEnvio();
+		return super.obtenerPrecio() + costoDeEnvio;
 	}
 
 	@Override

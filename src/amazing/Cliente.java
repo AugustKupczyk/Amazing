@@ -2,19 +2,18 @@ package amazing;
 
 public class Cliente {
 
-	private String nombre;
 	private int dni;
+	private String cliente;
 	private String direccion;
 
-	public Cliente(String nombre, int dni, String direccion) {
-		super();
-		this.nombre = nombre;
+	public Cliente(String nombre,int dni, String direccion) {
+		this.cliente = nombre;
 		this.dni = dni;
 		this.direccion = direccion;
 	}
 
 	public String obtenerNombreCliente() {
-		return nombre;
+		return cliente;
 	}
 
 	public int obtenerDniCliente() {
@@ -27,7 +26,7 @@ public class Cliente {
 
 	@Override
 	public String toString() {
-		return "Cliente [nombre=" + nombre + ", dni=" + dni + ", direccion=" + direccion + "]";
+		return "Cliente [nombre=" + cliente + ", dni=" + dni + ", direccion=" + direccion + "]";
 	}
 
 
