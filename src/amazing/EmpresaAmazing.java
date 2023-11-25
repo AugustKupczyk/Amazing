@@ -1,12 +1,16 @@
 package amazing;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class EmpresaAmazing implements IEmpresa {
 	private String cuit;
 	private Map<Integer, Pedido> pedidos;
+	private Map<Integer, Cliente> clientes;
 	private HashMap<String, Transporte> transportes;
 	private int codPedido;
 	private int codPaquete;
@@ -64,7 +68,7 @@ public class EmpresaAmazing implements IEmpresa {
 	public int registrarPedido(String cliente, String direccion, int dni) {
 		Cliente c = new Cliente(cliente, dni, direccion);
 		Carrito carrito = new Carrito();
-		Pedido p = new Pedido(codPedido, c, false, carrito, false);
+		Pedido p = new Pedido(codPedido, c, false, carrito, false, null);
 		pedidos.put(codPedido, p);
 		codPedido++;
 		System.out.println(codPedido);
@@ -173,17 +177,22 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public String cargarTransporte(String patente) {
-//		String s = "";
-//		Pedido p = buscarPedido(codPedido);
-//		Transporte t = buscarTransporte(patente);
-//		if (t.estaCargado()) {
-//			return "El transporte con patente " + patente + " ya está cargado.";
-//		}
-//		
-//		for(Paquete p2: t.identificarPaquetes()) {
-//			s = s + "[" + p.obtenerCodPedido() + " - " + codPaquete  + "]" + p.obtenerCliente().obtenerDireccion();
-//		}
+		Transporte t = buscarTransporte(patente);
 
+		Iterator<Pedido> it = pedidos.values().iterator();
+		while (it.hasNext()) {
+			Pedido p = it.next();
+			if (p.estaCerrado()) {
+				List<Paquete> paquetes = p.obtenerCarrito().obtenerPaquetes();
+				for (Paquete paq : paquetes) {
+					t.cargarPaquete(paq);
+					if (t.estaCargado()) {
+						p.agregarPaquete(paq);
+						paq.entregar();
+					}
+				}
+			}
+		}
 		return "";
 	}
 
@@ -213,8 +222,15 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public double costoEntrega(String patente) {
-		// TODO Auto-generated method stub
-		return 0;
+		Transporte t = buscarTransporte(patente);
+
+		double carga = 0;
+		if (t.identificarPaquetes().isEmpty()) {
+			throw new RuntimeException("el vehiculo no tiene paquetes cargados.");
+		}
+
+		return t.calcularValorDelViaje();
+
 	}
 
 	/**
@@ -228,8 +244,20 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public Map<Integer, String> pedidosNoEntregados() {
+		Map<Integer, String> pedidosNoEntregados = new HashMap<>();
 
-		return null;
+		for (Pedido pedido : pedidos.values()) {
+			// Verificar si el pedido está cerrado y no entregado
+			if (pedido.estaCerrado() && !pedido.estaEntregado()) {
+
+				Cliente cliente = pedido.obtenerCliente();
+
+				// Agregar al Map con el código del pedido y el nombre del cliente
+				pedidosNoEntregados.put(pedido.obtenerCodPedido(), cliente.obtenerNombreCliente());
+			}
+		}
+
+		return pedidosNoEntregados;
 	}
 
 	/**
@@ -253,7 +281,32 @@ public class EmpresaAmazing implements IEmpresa {
 
 	@Override
 	public boolean hayTransportesIdenticos() {
-		// TODO Auto-generated method stub
+		Set<Transporte> transportesCargadosUnicos = new HashSet<>();
+
+		for (Pedido pedido : pedidos.values()) {
+			if (pedido.estaCerrado() && pedido.estaEntregado()) {
+				Transporte transporteCargado = obtenerTransporteCargado(pedido);
+
+				if (transportesCargadosUnicos.contains(transporteCargado)) {
+					return true; // Se encontró un transporte idéntico
+				} else {
+					// Agregar el transporte al conjunto
+					transportesCargadosUnicos.add(transporteCargado);
+				}
+			}
+		}
+
 		return false;
+	}
+
+	private Transporte obtenerTransporteCargado(Pedido pedido) {
+		return pedido.obtenerTransporteCargado();
+	}
+
+	@Override
+	public String toString() {
+		return "EmpresaAmazing [cuit=" + cuit + ", pedidos=" + pedidos + ", clientes=" + clientes + ", transportes="
+				+ transportes + ", codPedido=" + codPedido + ", codPaquete=" + codPaquete + ", facturacionTotal="
+				+ facturacionTotal + "]";
 	}
 }

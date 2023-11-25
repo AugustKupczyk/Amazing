@@ -13,6 +13,10 @@ public class Carrito {
 	public void agregarPaquete(Paquete paquete) {
 		paquetesAEntregar.add(paquete);
 	}
+	
+	public void contienePaquete(Paquete paquete) {
+		paquetesAEntregar.add(paquete);
+	}
 
 	public void eliminarPaquete(Paquete paquete) {
 		paquetesAEntregar.remove(paquete);

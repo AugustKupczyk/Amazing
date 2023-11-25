@@ -27,6 +27,10 @@ public abstract class Paquete implements Comparable<Paquete> {
 	public boolean estaEntregado() {
 		return entregado;
 	}
+	
+	public void entregar() {
+		entregado = true;
+	}
 
 	public double obtenerPrecio() {
 		return precio;
