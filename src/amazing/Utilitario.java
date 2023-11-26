@@ -27,7 +27,6 @@ public class Utilitario extends Transporte {
 
 	    private void cargarPaqueteEspecial(PaqueteEspecial paqueteEspecial) {
 	        paquetesEspeciales.add(paqueteEspecial);
-	        cargar();
 	    }
 
 	    private void cargarPaqueteOrdinario(PaqueteOrdinario paqueteOrdinario) {

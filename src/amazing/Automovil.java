@@ -11,14 +11,11 @@ public class Automovil extends Transporte {
 		paquetesOrdinarios = new ArrayList<>();
 	}
 
-	 public void cargarPaquete(Paquete paquete) {
-	        if (paquete instanceof PaqueteOrdinario && paquete.calcularVolumen() < 2000) {
-	            paquetesOrdinarios.add((PaqueteOrdinario) paquete);
-	            cargar();
-	        } else {
-	            throw new RuntimeException("El automóvil solo puede llevar paquetes ordinarios menores a 2000 de volumen.");
-	        }
-	    }
+	public void cargarPaquete(Paquete paquete) {
+		if (paquete instanceof PaqueteOrdinario && paquete.calcularVolumen() < 2000) {
+			paquetesOrdinarios.add((PaqueteOrdinario) paquete);
+		}
+	}
 
 	@Override
 	protected double calcularValorDelViaje() {

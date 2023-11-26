@@ -15,7 +15,7 @@ public abstract class Transporte {
 		this.volMaxDeCarga = volMaxDeCarga;
 		this.valorDelViaje = valorDelViaje;
 		this.cargado = false;
-		paquetes = new ArrayList<>();
+		this.paquetes = new ArrayList<>();
 	}
 
 	public boolean estaCargado() {

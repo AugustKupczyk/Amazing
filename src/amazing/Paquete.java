@@ -5,13 +5,13 @@ public abstract class Paquete implements Comparable<Paquete> {
 	private int identificador;
 	protected double volumen;
 	protected double precio;
-	private boolean entregado;
+	private boolean cargado;
 
-	public Paquete(int identificador, double volumen, double costo, boolean entregado) {
+	public Paquete(int identificador, double volumen, double costo, boolean cargado) {
 		this.identificador = identificador;
 		this.volumen = volumen;
 		this.precio = costo;
-		this.entregado = entregado;
+		this.cargado = cargado;
 	}
 
 	public int obtenerIdentificador() {
@@ -24,12 +24,12 @@ public abstract class Paquete implements Comparable<Paquete> {
 
 	public abstract double calcularTotalAPagar();
 
-	public boolean estaEntregado() {
-		return entregado;
+	public boolean estaCargado() {
+		return cargado;
 	}
 	
-	public void entregar() {
-		entregado = true;
+	public void cargar() {
+		cargado = true;
 	}
 
 	public double obtenerPrecio() {
@@ -45,7 +45,7 @@ public abstract class Paquete implements Comparable<Paquete> {
 	@Override
 	public String toString() {
 		return "Paquete [identificador=" + identificador + ", volumen=" + volumen + ", precio=" + precio
-				+ ", entregado=" + entregado + "]";
+				+ ", entregado=" + cargado + "]";
 	}
 
 }

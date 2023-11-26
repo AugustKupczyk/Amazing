@@ -17,7 +17,6 @@ public class Camion extends Transporte {
 	public void cargarPaquete(Paquete paquete) {
 		if (paquete instanceof PaqueteEspecial && paquete.calcularVolumen() > 2000) {
 			paquetesEspeciales.add((PaqueteEspecial) paquete);
-			cargar();
 		}
 	}
 
